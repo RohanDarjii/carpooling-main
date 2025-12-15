@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div class="card">
+<div class="card-results">
     <div class="card-header">
         <div>
             <div class="card-title">Available Cars</div>
@@ -38,6 +38,9 @@
                     <div class="ride-info">
                         <strong>{{ car.model_name }}</strong>
                         <span>License: {{ car.license_plate }}</span>
+                        {% if car.remarks %}
+                            <span>Remarks: {{ car.remarks }}</span>
+                        {% endif %}
                     </div>
 
                     <form action="{% url 'book_car' car.id %}" method="post">

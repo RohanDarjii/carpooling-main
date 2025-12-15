@@ -95,7 +95,7 @@ def book_car(request, car_id):
                 end_time=end_full,
                 destination=dest,
                 project_no=project_no,
-                status='CONFIRMED'
+                status='CONFIRMED',
             )
             return redirect('booking_success')
         

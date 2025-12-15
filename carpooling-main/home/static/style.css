@@ -17,6 +17,17 @@ body {
     width: 380px; max-width: 92vw;
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(148, 163, 184, 0.15);
     position: relative; overflow: hidden;
+
+}
+.card-results  {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px 26px 24px;
+    width: 1000px;
+    max-width: 95vw;
+    min-height: 600px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(148, 163, 184, 0.15);
+    position: relative; overflow: hidden;
 }
 
 .card-header {
@@ -117,27 +128,31 @@ input:focus {
 }
 
 .ride-info strong {
-    font-size: 15px;
+    font-size: 20px;
     color: #111827;
 }
 
 .ride-info span {
-    font-size: 12px;
+    font-size: 15px;
     color: #6b7280;
 }
 
-/* The small "Book" button */
 .btn-sm {
     background: #10b981; /* Green */
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
+    
+    /* BIGGER DIMENSIONS */
+    padding: 12px 24px;   /* Increased padding (Top/Bottom, Left/Right) */
+    font-size: 15px;      /* Larger text */
+    border-radius: 10px;  /* Slightly rounder corners */
+    min-width: 100px;     /* Ensures buttons don't look too thin */
+    
+    font-weight: 700;     /* Bolder text */
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
-    transition: background 0.2s ease;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25); /* Stronger shadow */
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .btn-sm:hover {
