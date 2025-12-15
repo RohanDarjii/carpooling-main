@@ -90,13 +90,35 @@
 
         .time-text { font-weight: 800; white-space: nowrap; }
         .dest-text { color: #2563eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Add inside <style> tag */
 
+        .btn-back {
+            text-decoration: none;
+            color: #64748b;         /* Muted slate color */
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            margin-right: 20px;     /* Space between button and Month Title */
+        }
+
+        .btn-back:hover {
+            background: #e2e8f0;    /* Light grey hover */
+            color: #1e293b;         /* Dark text on hover */
+            border-color: #cbd5e1;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
+        <a href="{% url 'home' %}" class="btn-back">
+        &larr; Back to Home
+    </a>
         <div class="title">{{ current_month }}</div>
         <div class="nav-group">
             <a href="?date={{ prev_week }}" class="btn-nav">← Prev</a>
