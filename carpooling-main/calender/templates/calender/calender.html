@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Schedule</title>
+    <style>
+        /* --- GLOBAL STYLES --- */
+        body { background: #f1f5f9; font-family: sans-serif; padding: 40px; }
+        .container { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        
+        /* HEADER */
+        .header { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+        .title { font-size: 20px; font-weight: 800; color: #1e293b; }
+        .nav-group { display: flex; gap: 10px; }
+        .btn-nav { text-decoration: none; padding: 8px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; color: #334155; font-weight: 600; font-size: 14px; }
+        .nav-input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; color: #334155; font-weight: 700; }
+
+        /* TABLE */
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        th { text-align: left; padding: 15px; background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; }
+        .col-car { width: 180px; padding-left: 20px; border-right: 1px solid #e2e8f0; }
+        .today-header { color: #2563eb; background: #eff6ff; border-bottom-color: #2563eb; }
+        
+        td { padding: 0; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; height: 80px; vertical-align: top; }
+        .car-cell { padding: 15px 20px; vertical-align: middle; border-right: 2px solid #e2e8f0; }
+        .car-name { font-weight: 700; display: block; }
+        .car-plate { font-size: 14px; color: #6387bbff; }
+        .car-remarks { font-size: 13px; color: rgba(233, 61, 8, 1); }
+        
+        /* --- THE LOGIC CSS: VISUAL CHIPS --- */
+        .day-wrapper { padding: 6px 0; } /* Wrapper to add vertical spacing */
+
+        .booking-chip {
+            height: 42px;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 8px;
+            margin-bottom: 4px;
+            color: #1e3a8a;
+            position: relative;
+            background: #dbeafe; /* Light Blue Base */
+        }
+
+        /* CASE 1: Single Day (Rounded All) */
+        .chip-single {
+            margin: 0 6px;
+            margin-top: 3px;
+            border-radius: 6px;
+            border-left: 3px solid #2563eb;
+        }
+
+        /* CASE 2: Start of Multi-Day (Round Left, Flat Right) */
+        .chip-start {
+            margin-left: 6px; 
+            margin-right: -1px; /* Overlap border */
+            margin-top: 3px;
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+            border-left: 3px solid #2563eb;
+            z-index: 2;
+        }
+
+        /* CASE 3: Middle (Flat All, Lighter) */
+        .chip-middle {
+            margin-left: -1px;
+            margin-right: -1px;
+            margin-top: 3px;
+            background: #eff6ff; /* Lighter blue */
+            opacity: 0.8;
+            z-index: 1;
+        }
+        /* Dotted line to show continuation */
+        .chip-middle::after {
+            content: "••••";
+            position: absolute; width: 100%; text-align: center;
+            color: #93c5fd; letter-spacing: 2px; font-size: 10px; left:0;
+        }
+
+        /* CASE 4: End of Multi-Day (Flat Left, Round Right) */
+        .chip-end {
+            margin-left: -1px;
+            margin-right: 6px;
+            margin-top: 3px;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            background: #dbeafe;
+        }
+
+        .time-text { font-weight: 800; white-space: nowrap; }
+        .dest-text { color: #2563eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title">{{ current_month }}</div>
+        <div class="nav-group">
+            <a href="?date={{ prev_week }}" class="btn-nav">← Prev</a>
+            <form method="get" action="" style="margin:0;">
+                <input type="date" name="date" value="{{ current_date_iso }}" onchange="this.form.submit()" class="nav-input">
+            </form>
+            <a href="?date={{ next_week }}" class="btn-nav">Next →</a>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-car">Vehicle</th>
+                {% for date in week_dates %}
+                    <th class="{% if date == today_date %}today-header{% endif %}">
+                        {{ date|date:"D d" }}
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in resource_schedule %}
+            <tr>
+                <td class="car-cell">
+                    <span class="car-name">{{ row.car.model_name }}</span>
+                    <span class="car-plate">{{ row.car.license_plate }}</span><br>
+                    {% if row.car.remarks %}
+                            <span class="car-remarks">Remarks: {{ row.car.remarks }}</span>
+                        {% endif %}
+                </td>
+
+                {% for day_info in row.days %}
+                    <td class="{% if day_info.is_today %}today-col{% endif %}">
+                        <div class="day-wrapper">
+                        {% for booking in day_info.bookings %}
+
+                            {# --- LOGIC START --- #}
+                            
+                            {# CASE 1: SINGLE DAY TRIP #}
+                            {% if booking.start_time.date == day_info.date and booking.end_time.date == day_info.date %}
+                                <div class="booking-chip chip-single" title="{{ booking.destination }}">
+                                    <span class="time-text">{{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</span>
+                                    <span class="dest-text">"Booked by Username to {{ booking.destination }}"</span>
+                                </div>
+
+                            {# CASE 2: START OF MULTI-DAY #}
+                            {% elif booking.start_time.date == day_info.date %}
+                                <div class="booking-chip chip-start" title="{{ booking.destination }}">
+                                    <span class="time-text">{{ booking.start_time|time:"H:i" }} →</span>
+                                    <span class="dest-text">"Booked by Username to {{ booking.destination }}"</span>
+                                </div>
+
+                            {# CASE 3: END OF MULTI-DAY #}
+                            {% elif booking.end_time.date == day_info.date %}
+                                <div class="booking-chip chip-end">
+                                    <span class="time-text">→ {{ booking.end_time|time:"H:i" }}</span>
+                                    <span class="dest-text">Trip Ends</span>
+                                </div>
+
+                            {# CASE 4: MIDDLE OF MULTI-DAY #}
+                            {% else %}
+                                <div class="booking-chip chip-middle">
+                                    </div>
+                            {% endif %}
+                            
+                            {# --- LOGIC END --- #}
+
+                        {% endfor %}
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
