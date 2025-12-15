@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmed</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+    <div class="card text-center">
+        
+        <div class="success-icon">🎉</div>
+
+        <h1 class="success-title">Booking Confirmed!</h1>
+
+        <p class="success-desc">
+            Your car has been reserved successfully.<br>
+            We look forward to seeing you.
+        </p>
+
+        <a href="{% url 'home' %}" class="btn-primary" style="text-decoration: none; display: inline-block;">
+            Book Another Ride
+        </a>
+
+    </div>
+
+</body>
+</html>

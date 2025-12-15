@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Find a Ride</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Find a Ride</div>
+                <div class="card-subtitle">Enter your travel details below</div>
+            </div>
+            <div class="badge"><span class="badge-dot"></span> Live</div>
+        </div>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p>⚠️ {{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form action="{% url 'results' %}" method="get">
+            <div class="card-body">
+                
+                <div class="field-group">
+                    <div class="field">
+                        <label>From Date</label>
+                        <input type="date" name="from_date" value="{{ form.from_date }}" required>
+                    </div>
+                    <div class="field">
+                        <label>To Date</label>
+                        <input type="date" name="to_date" value="{{ form.to_date }}" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <div class="field">
+                        <label>Start Time</label>
+                        <input type="time" name="time_from" value="{{ form.time_from }}" required>
+                    </div>
+                    <div class="field">
+                        <label>End Time</label>
+                        <input type="time" name="time_to" value="{{ form.time_to }}" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Destination</label>
+                    <input type="text" name="destination" placeholder="e.g. City Center or Airport" value="{{ form.destination }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Project code</label>
+                    <input type="text" name="project_no" placeholder="e.g. PROJ1234" value="{{ form.project_no }}" required>
+
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Check Availability
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

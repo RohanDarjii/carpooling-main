@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Cars</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .no-cars { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <h1>Fleet Inventory</h1>
+
+    {% if cars %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Model Name</th>
+                    <th>License Plate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for car in cars %}
+                <tr>
+                    <td>{{ car.model_name }}</td>
+                    <td>{{ car.license_plate }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-cars">No cars found in the database.</p>
+    {% endif %}
+
+</body>
+</html>

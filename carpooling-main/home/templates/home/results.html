@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Car</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<div class="card">
+    <div class="card-header">
+        <div>
+            <div class="card-title">Available Cars</div>
+            <div class="card-subtitle">
+                Found {{ available_cars|length }} ride(s) for your dates
+            </div>
+        </div>
+        <a href="{% url 'home' %}?from_date={{ search_params.from_date }}&to_date={{ search_params.to_date }}&time_from={{ search_params.time_from }}&time_to={{ search_params.time_to }}&destination={{ search_params.destination }}&project_no={{ search_params.project_no }}" 
+        class="btn-secondary" style="margin:0; font-size:12px;">
+            ← Back
+        </a>
+    </div>
+
+    {% if errors %}
+        <div class="messages">
+            {% for e in errors %}
+                <p>⚠️ {{ e }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="rides-container">
+        {% if available_cars %}
+            {% for car in available_cars %}
+                <div class="ride-card">
+                    
+                    <div class="ride-info">
+                        <strong>{{ car.model_name }}</strong>
+                        <span>License: {{ car.license_plate }}</span>
+                    </div>
+
+                    <form action="{% url 'book_car' car.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="from_date" value="{{ search_params.from_date }}">
+                        <input type="hidden" name="to_date" value="{{ search_params.to_date }}">
+                        <input type="hidden" name="time_from" value="{{ search_params.time_from }}">
+                        <input type="hidden" name="time_to" value="{{ search_params.time_to }}">
+                        <input type="hidden" name="destination" value="{{ search_params.destination }}">
+                        <input type="hidden" name="project_no" value="{{ search_params.project_no }}">
+                        
+                        <button type="submit" class="btn-sm">
+                            Book
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        
+        {% else %}
+            <div style="text-align: center; padding: 20px; color: #6b7280;">
+                <p>No cars available for this time slot.</p>
+                <a href="{% url 'home' %}?from_date={{ search_params.from_date }}&to_date={{ search_params.to_date }}&time_from={{ search_params.time_from }}&time_to={{ search_params.time_to }}&destination={{ search_params.destination }}&project_no={{ search_params.project_no }}" 
+                style="color: #2563eb; text-decoration: none; font-weight: 600; font-size: 14px;">Try different dates</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
