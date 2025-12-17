@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span>KOCKS Gmbh</span>
+        </div>
+
+        <div class="nav-links">
+            
+            <a href="{% url 'home' %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                + Book a Ride
+            </a>
+
+            <a href="{% url 'calender_view' %}" class="nav-item {% if request.resolver_match.url_name == 'calender_view' %}active{% endif %}">
+                View Schedule
+            </a>
+
+            {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <button class="btn-user">
+                        {{ user.username }} ▾
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="/admin/">Admin Panel</a>
+                        <a href="/accounts/logout/">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="dropdown">
+                    <button class="btn-login">Login ▾</button>
+                    <div class="dropdown-content">
+                        <a href="/clientlogin">Client Login</a>
+                        <a href="/admin/login/">Admin Login</a>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </nav>
+</body>
+</html>
