@@ -9,5 +9,7 @@ urlpatterns = [
     path('book/<int:car_id>/', views.book_car, name='book_car'),
     #The Confirmation Screen
     path('success/', views.booking_success, name='booking_success'),
+    # The New Login Landing Page
+    path('login-required/', views.login_landing, name='login_landing'),
 
 ]

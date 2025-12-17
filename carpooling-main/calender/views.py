@@ -4,7 +4,8 @@ from datetime import timedelta, datetime
 from django.shortcuts import render
 from django.utils import timezone
 from home.models import Car, Booking
-
+from django.contrib.auth.decorators import login_required
+@login_required(login_url='login_landing')
 def weekly_calender(request):
         date_str = request.GET.get('date')
         if date_str:

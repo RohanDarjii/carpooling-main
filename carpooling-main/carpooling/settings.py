@@ -37,6 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django_extensions',
+    'sslserver',      # Required by allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.microsoft',
+
+
     'home',
     'calender',
 ]
@@ -49,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'carpooling.urls'
@@ -60,6 +70,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -106,6 +117,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# settings.py
+
+SOCIALACCOUNT_PROVIDERS = {
+    'microsoft': {
+        'TENANT': '41eef333-a301-473e-9f6f-7d4c168c48ad',  
+        
+        'SCOPE': ['User.Read'],
+        'AUTH_PARAMS': {'prompt': 'select_account'},
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -128,3 +149,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Where to go after successful login
+LOGIN_REDIRECT_URL = '/'  # Points to the home/booking view
+
+# Where to go if not logged in (Global Default)
+LOGIN_URL = 'login_landing'
+LOGOUT_REDIRECT_URL = 'login_landing'
+SITE_ID = 1

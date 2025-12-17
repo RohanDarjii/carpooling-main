@@ -2,9 +2,16 @@ from django.shortcuts import get_object_or_404, render,redirect
 from datetime import datetime
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_time
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from . import models
 # Create your views here.
+def login_landing(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    return render(request, 'home/login_landing.html')
+
+@login_required(login_url='login_landing')
 def home(request):
     context = {
         'form': request.GET,
@@ -20,6 +27,7 @@ def get_datetimes(date_str, time_str):
     dt = datetime.combine(parse_date(date_str), parse_time(time_str))
     return timezone.make_aware(dt, timezone.get_current_timezone())
 
+@login_required(login_url='login_landing')
 def search_results(request):
     context = {'available_cars': [],
                'errors': [],
@@ -64,7 +72,8 @@ def search_results(request):
     except Exception as e:
         context['errors'].append("Invalid date/time format.")
     return render(request, 'home/results.html', context)
-    
+
+@login_required(login_url='login_landing')    
 def book_car(request, car_id):
     if request.method == 'POST':
         f_date = request.POST.get('from_date')
@@ -104,7 +113,7 @@ def book_car(request, car_id):
             return redirect('home')
         
     return redirect('home')
-
+@login_required(login_url='login_landing')
 def booking_success(request):
     return render(request, 'home/success.html')
 
