@@ -38,12 +38,14 @@ def search_results(request):
     t_time = request.GET.get('time_to')
     dest = request.GET.get('destination')
     project_no = request.GET.get('project_no')
+    client_name = request.GET.get('client_name')
 
     # Store params to pass them to the template (and later to the booking view)
     context['search_params'] = {
         'from_date': f_date, 'to_date': t_date,
         'time_from': f_time, 'time_to': t_time,
-        'destination': dest, 'project_no': project_no
+        'destination': dest, 'project_no': project_no,
+        'client_name': client_name,
     }
     if not all([f_date, t_date, f_time, t_time, project_no]):
         context['errors'].append("Please fill in all required fields.")
@@ -82,6 +84,8 @@ def book_car(request, car_id):
         t_time = request.POST.get('time_to')
         dest = request.POST.get('destination')
         project_no = request.POST.get('project_no')
+        client_name = request.POST.get('client_name')
+         # If client_name is provided, use it as booked_by
         try:
             start_full = get_datetimes(f_date, f_time)
             end_full = get_datetimes(t_date, t_time)
@@ -96,7 +100,7 @@ def book_car(request, car_id):
             if is_booked:
                 messages.error(request, "Sorry, this car {car.model_name} has just been booked for the selected time slot.")
                 return redirect('home')
-            
+            microsoft_name = request.user.get_full_name() or request.user.username
             #if not booked, create the booking
             models.Booking.objects.create(
                 car=car,
@@ -105,6 +109,9 @@ def book_car(request, car_id):
                 destination=dest,
                 project_no=project_no,
                 status='CONFIRMED',
+                booked_by=microsoft_name,
+                client_name=client_name,
+                
             )
             return redirect('booking_success')
         

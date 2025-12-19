@@ -157,3 +157,6 @@ LOGIN_REDIRECT_URL = '/'  # Points to the home/booking view
 LOGIN_URL = 'login_landing'
 LOGOUT_REDIRECT_URL = 'login_landing'
 SITE_ID = 1
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+ACCOUNT_LOGOUT_ON_GET = True

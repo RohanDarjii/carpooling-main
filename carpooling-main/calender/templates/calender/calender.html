@@ -58,14 +58,14 @@
                             {% if booking.start_time.date == day_info.date and booking.end_time.date == day_info.date %}
                                 <div class="booking-chip chip-single" title="{{ booking.destination }}">
                                     <span class="time-text">{{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</span>
-                                    <span class="dest-text">"Booked by {{ user.username }} to {{ booking.destination }}"</span>
+                                    <span class="dest-text">"Booked by {{ booking.client_name|default:booking.booked_by }} to {{ booking.destination }}"</span>
                                 </div>
 
                             {# CASE 2: START OF MULTI-DAY #}
                             {% elif booking.start_time.date == day_info.date %}
                                 <div class="booking-chip chip-start" title="{{ booking.destination }}">
                                     <span class="time-text">{{ booking.start_time|time:"H:i" }} →</span>
-                                    <span class="dest-text">"Booked by {{ user.username }} to {{ booking.destination }}"</span>
+                                    <span class="dest-text">"Booked by {{ booking.client_name|default:booking.booked_by }} to {{ booking.destination }}"</span>
                                 </div>
 
                             {# CASE 3: END OF MULTI-DAY #}
