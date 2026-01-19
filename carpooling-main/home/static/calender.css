@@ -69,7 +69,7 @@
         .chip-middle::after {
             content: "••••";
             position: absolute; width: 100%; text-align: center;
-            color: #93c5fd; letter-spacing: 2px; font-size: 10px; left:0;
+            color: oklch(80.908% 0.09569 251.839); letter-spacing: 2px; font-size: 10px; left:0;
         }
 
         /* CASE 4: End of Multi-Day (Flat Left, Round Right) */
@@ -104,3 +104,39 @@
             color: #1e293b;         /* Dark text on hover */
             border-color: #cbd5e1;
         }
+        /* ========================= */
+/* TOOLTIP (NON-INTRUSIVE)   */
+/* ========================= */
+
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-content {
+    position: absolute;
+    top: 50%;
+    left: 105%;
+    transform: translateY(-50%);
+    
+    background: rgba(77, 142, 202, 0.95);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    
+    min-width: 220px;
+    max-width: 300px;
+    white-space: normal;
+
+    z-index: 9999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+
+.tooltip-wrapper:hover .tooltip-content {
+    visibility: visible;
+    opacity: 1;
+}

@@ -6,25 +6,49 @@
     {% load static %}
     <style>
         @import url("{% static 'calender.css' %}");
+
+        /* GLOBAL TOOLTIP (SAFE, FLOATING) */
+        #global-tooltip {
+            position: fixed;
+            display: none;
+            background: rgba(20, 20, 20, 0.95);
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            max-width: 320px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
     </style>
 </head>
+
 <body>
+
 {% include 'home/navbar.html' %}
+
 <div class="container">
+
+    <!-- HEADER -->
     <div class="header">
-        <a href="{% url 'home' %}" class="btn-back">
-        &larr; Back to Home
-    </a>
+        <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
+
         <div class="title">{{ current_month }}</div>
+
         <div class="nav-group">
             <a href="?date={{ prev_week }}" class="btn-nav">← Prev</a>
-            <form method="get" action="" style="margin:0;">
-                <input type="date" name="date" value="{{ current_date_iso }}" onchange="this.form.submit()" class="nav-input">
+            <form method="get" style="margin:0;">
+                <input type="date" name="date"
+                       value="{{ current_date_iso }}"
+                       onchange="this.form.submit()"
+                       class="nav-input">
             </form>
             <a href="?date={{ next_week }}" class="btn-nav">Next →</a>
         </div>
     </div>
 
+    <!-- CALENDAR TABLE -->
     <table>
         <thead>
             <tr>
@@ -36,62 +60,132 @@
                 {% endfor %}
             </tr>
         </thead>
+
         <tbody>
-            {% for row in resource_schedule %}
+        {% for row in resource_schedule %}
             <tr>
+
+                <!-- CAR CELL -->
                 <td class="car-cell">
-                    <span class="car-name">{{ row.car.model_name }}</span>
-                    <span class="car-plate">{{ row.car.license_plate }}</span><br>
-                    {% if row.car.remarks %}
-                            <span class="car-remarks">Remarks: {{ row.car.remarks }}</span>
-                        {% endif %}
+                    <span class="car-name tooltip-source"
+                          data-tooltip="
+                            <strong>Model:</strong> {{ row.car.model_name }}<br>
+                            <strong>License:</strong> {{ row.car.license_plate }}<br>
+                            <strong>Status:</strong> {% if row.car.is_active %}Active{% else %}Inactive{% endif %}
+                            {% if row.car.remarks %}<br><strong>Remarks:</strong> {{ row.car.remarks }}{% endif %}
+                          ">
+                        {{ row.car.model_name }}
+                    </span><br>
+                    <span class="car-plate">{{ row.car.license_plate }}</span>
                 </td>
 
+                <!-- DAY CELLS -->
                 {% for day_info in row.days %}
-                    <td class="{% if day_info.is_today %}today-col{% endif %}">
-                        <div class="day-wrapper">
+                <td class="{% if day_info.is_today %}today-col{% endif %}">
+                    <div class="day-wrapper">
+
                         {% for booking in day_info.bookings %}
 
-                            {# --- LOGIC START --- #}
-                            
-                            {# CASE 1: SINGLE DAY TRIP #}
                             {% if booking.start_time.date == day_info.date and booking.end_time.date == day_info.date %}
-                                <div class="booking-chip chip-single" title="{{ booking.destination }}">
-                                    <span class="time-text">{{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</span>
+                                <!-- SINGLE DAY -->
+                                <div class="booking-chip chip-single tooltip-source"
+                                     data-tooltip="
+                                        <strong>Booked By:</strong> {{ booking.booked_by }}<br>
+                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        <strong>Destination:</strong> {{ booking.destination }}<br>
+                                        <strong>Project:</strong> {{ booking.project_no }}<br>
+                                        <strong>From:</strong> {{ booking.start_time }}<br>
+                                        <strong>To:</strong> {{ booking.end_time }}
+                                     ">
+                                    <span class="time-text">{{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</span><br>
                                     <span class="dest-text">"Booked by {{ booking.client_name|default:booking.booked_by }} to {{ booking.destination }}"</span>
                                 </div>
 
-                            {# CASE 2: START OF MULTI-DAY #}
                             {% elif booking.start_time.date == day_info.date %}
-                                <div class="booking-chip chip-start" title="{{ booking.destination }}">
-                                    <span class="time-text">{{ booking.start_time|time:"H:i" }} →</span>
+                                <!-- START MULTI DAY -->
+                                <div class="booking-chip chip-start tooltip-source"
+                                     data-tooltip="
+                                        <strong>Booked By:</strong> {{ booking.booked_by }}<br>
+                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        <strong>Destination:</strong> {{ booking.destination }}<br>
+                                        <strong>Project:</strong> {{ booking.project_no }}<br>
+                                        <strong>From:</strong> {{ booking.start_time }}<br>
+                                        <strong>To:</strong> {{ booking.end_time }}
+                                     ">
+                                     <span class="time-text">{{ booking.start_time|time:"H:i" }} →</span>
                                     <span class="dest-text">"Booked by {{ booking.client_name|default:booking.booked_by }} to {{ booking.destination }}"</span>
                                 </div>
 
-                            {# CASE 3: END OF MULTI-DAY #}
                             {% elif booking.end_time.date == day_info.date %}
-                                <div class="booking-chip chip-end">
-                                    <span class="time-text">→ {{ booking.end_time|time:"H:i" }}</span>
+                                <!-- END MULTI DAY -->
+                                <div class="booking-chip chip-end tooltip-source"
+                                     data-tooltip="
+                                        <strong>Booked By:</strong> {{ booking.booked_by }}<br>
+                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        <strong>Destination:</strong> {{ booking.destination }}<br>
+                                        <strong>Project:</strong> {{ booking.project_no }}<br>
+                                        <strong>From:</strong> {{ booking.start_time }}<br>
+                                        <strong>To:</strong> {{ booking.end_time }}
+                                     ">
+                                     <span class="time-text">→ {{ booking.end_time|time:"H:i" }}</span>
                                     <span class="dest-text">Trip Ends</span>
                                 </div>
 
-                            {# CASE 4: MIDDLE OF MULTI-DAY #}
                             {% else %}
-                                <div class="booking-chip chip-middle">
-                                    </div>
+                                <!-- MIDDLE MULTI DAY -->
+                                <div class="booking-chip chip-middle tooltip-source"
+                                     data-tooltip="
+                                        <strong>Booked By:</strong> {{ booking.booked_by }}<br>
+                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        <strong>Destination:</strong> {{ booking.destination }}<br>
+                                        <strong>Project:</strong> {{ booking.project_no }}<br>
+                                        <strong>From:</strong> {{ booking.start_time }}<br>
+                                        <strong>To:</strong> {{ booking.end_time }}
+                                     ">
+                                </div>
                             {% endif %}
-                            
-                            {# --- LOGIC END --- #}
 
                         {% endfor %}
-                        </div>
-                    </td>
+
+                    </div>
+                </td>
                 {% endfor %}
+
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
+
 </div>
+
+<!-- GLOBAL TOOLTIP -->
+<div id="global-tooltip"></div>
+
+<!-- TOOLTIP SCRIPT -->
+<script>
+const tooltip = document.getElementById('global-tooltip');
+
+document.addEventListener('mouseover', function (e) {
+    const source = e.target.closest('.tooltip-source');
+    if (!source) return;
+
+    tooltip.innerHTML = source.dataset.tooltip;
+    tooltip.style.display = 'block';
+});
+
+document.addEventListener('mousemove', function (e) {
+    if (tooltip.style.display === 'block') {
+        tooltip.style.top = (e.clientY + 15) + 'px';
+        tooltip.style.left = (e.clientX + 15) + 'px';
+    }
+});
+
+document.addEventListener('mouseout', function (e) {
+    if (e.target.closest('.tooltip-source')) {
+        tooltip.style.display = 'none';
+    }
+});
+</script>
 
 </body>
 </html>
