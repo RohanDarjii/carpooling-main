@@ -10,8 +10,8 @@
         .nav-input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; color: #334155; font-weight: 700; }
 
         /* TABLE */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { text-align: left; padding: 15px; background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #64748b; font-size: 12px; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; background-color: snow; border-radius: 3px;}
+        th { text-align: left; padding: 15px; background: #f8fafc; border-bottom: 2px solid #d6e7fc; color: #64748b; font-size: 12px; text-transform: uppercase; }
         .col-car { width: 180px; padding-left: 20px; border-right: 1px solid #e2e8f0; }
         .today-header { color: #2563eb; background: #eff6ff; border-bottom-color: #2563eb; }
         

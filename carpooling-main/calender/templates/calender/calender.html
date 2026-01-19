@@ -1,3 +1,4 @@
+{% load calender_extras %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,18 +37,27 @@
 
         <div class="title">{{ current_month }}</div>
 
-        <div class="nav-group">
-            <a href="?date={{ prev_week }}" class="btn-nav">← Prev</a>
-            <form method="get" style="margin:0;">
-                <input type="date" name="date"
-                       value="{{ current_date_iso }}"
-                       onchange="this.form.submit()"
-                       class="nav-input">
-            </form>
-            <a href="?date={{ next_week }}" class="btn-nav">Next →</a>
+            <div class="nav-group">
+                <a href="?date={{ prev_week }}" class="btn-nav">← Prev</a>
+                <!-- VIEW TOGGLE -->
+
+
+                <!-- DATE PICKER -->
+                <form method="get" style="margin:0;">
+                    <input type="hidden" name="view" value="{{ view_type }}">
+                    <input type="date"
+                        name="date"
+                        value="{{ current_date_iso }}"
+                        onchange="this.form.submit()"
+                        class="nav-input">
+                </form>
+                <a href="?date={{ next_week }}" class="btn-nav">Next →</a>
+                                <a href="?view=week&date={{ current_date_iso }}" class="btn-nav">Week</a>
+                <a href="?view=month&date={{ current_date_iso }}" class="btn-nav">Month</a>
+            </div>
         </div>
     </div>
-
+{% if view_type == "week" %}
     <!-- CALENDAR TABLE -->
     <table>
         <thead>
@@ -155,6 +165,48 @@
         {% endfor %}
         </tbody>
     </table>
+{% endif %}
+{% if view_type == "month" %}
+<table>
+    <thead>
+        <tr>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for week in month_days %}
+        <tr>
+        {% for day in week %}
+            <td class="{% if day == today_date %}today-col{% endif %}">
+                <strong>{{ day.day }}</strong>
+
+                {% for booking in booking_map|get_item:day %}
+                    <div class="booking-chip chip-single tooltip-source"
+                         data-tooltip="
+                            <strong>Booked By:</strong> {{ booking.booked_by }}<br>
+                            {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                            <strong>Car:</strong> {{ booking.car.model_name }}<br>
+                            <strong>From:</strong> {{ booking.start_time }}<br>
+                            <strong>To:</strong> {{ booking.end_time }}
+                         ">
+                        {{ booking.start_time|time:"H:i" }}
+                        {{ booking.client_name|default:booking.booked_by }}
+                    </div>
+                {% endfor %}
+
+            </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
 </div>
 
