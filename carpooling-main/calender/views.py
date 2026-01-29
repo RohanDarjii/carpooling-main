@@ -14,7 +14,6 @@ def weekly_calender(request):
             focus_date = datetime.strptime(date_str, '%Y-%m-%d').date()
         else:
             focus_date = timezone.now().date()
-
         # 2. Calculate Week Range (Mon - Sun)
         start_of_week = focus_date - timedelta(days=focus_date.weekday())
         end_of_week = start_of_week + timedelta(days=6)
@@ -76,19 +75,25 @@ def weekly_calender(request):
                 while current <= end:
                     booking_map.setdefault(current, []).append(booking)
                     current += timedelta(days=1)
+            prev_month = (focus_date.replace(day=1) - timedelta(days=1)).replace(day=1)
+            next_month = (focus_date.replace(day=28) + timedelta(days=4)).replace(day=1)
 
 
         context = {
             'week_dates': week_dates,
             'resource_schedule': resource_schedule,
-            'current_month': start_of_week.strftime('%B %Y'),
+            'current_month': focus_date.strftime('%B %Y'),
             'current_date_iso': focus_date.strftime('%Y-%m-%d'),
             'prev_week': (start_of_week - timedelta(days=7)).strftime('%Y-%m-%d'),
             'next_week': (start_of_week + timedelta(days=7)).strftime('%Y-%m-%d'),
             'today_date': timezone.now().date(),
             'view_type': view_type,
-            'booking_map': booking_map,
             'month_days': month_days,
+            'booking_map': booking_map,
+            "current_month_number": month,
+            'prev_month': prev_month.strftime('%Y-%m-%d'),
+            'next_month': next_month.strftime('%Y-%m-%d'),
+ 
         }
 
         return render(request, 'calender/calender.html', context)

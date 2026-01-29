@@ -2,8 +2,14 @@ from django.db import models
 
 # Create your models here.
 class Car(models.Model):
+    LOCATION_CHOICES = (
+        ('koblenz', 'Koblenz'),
+        ('frankfurt', 'Frankfurt'),
+        ('berlin', 'Berlin'),
+    )
     model_name = models.CharField(max_length=100)
     license_plate = models.CharField(max_length=20)
+    location = models.CharField(max_length=20, choices=LOCATION_CHOICES)
     is_active = models.BooleanField(default=True)
     remarks = models.CharField(max_length=100, blank=True)
 

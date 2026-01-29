@@ -123,10 +123,4 @@ def book_car(request, car_id):
 @login_required(login_url='login_landing')
 def booking_success(request):
     return render(request, 'home/success.html')
-
-
-        
-
-        
-
-
+   

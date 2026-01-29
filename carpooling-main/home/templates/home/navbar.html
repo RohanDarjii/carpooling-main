@@ -14,12 +14,17 @@
         </div>
 
         <div class="nav-links">
-            
-            <a href="{% url 'home' %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            <a href="{% url 'home'  %}" class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                 + Book a Ride
             </a>
+            {% if perms.home.change_car %}
+                <a href="/admin/home/car" class="nav-item">
+                    🚗 Cars Status
+                </a>
+            {% endif %}
 
-            <a href="{% url 'calender_view' %}" class="nav-item {% if request.resolver_match.url_name == 'calender_view' %}active{% endif %}">
+
+            <a href="{% url 'calender_view'  %}" class="nav-item {% if request.resolver_match.url_name == 'calender_view' %}active{% endif %}">
                 View Schedule
             </a>
 
