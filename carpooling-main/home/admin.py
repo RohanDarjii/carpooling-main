@@ -9,8 +9,17 @@ class CarAdmin(admin.ModelAdmin):
         'license_plate',
         'location',
         'is_active',
+        "colored_service_status",
     )
+    list_filter = ("location", "is_active")
+    search_fields = ("model_name", "license_plate")
+    def colored_service_status(self, obj):
+        if obj.is_service_due():
+            return "🔴 Overdue"
+        return "🟢 OK"
 
+    colored_service_status.short_description = "Service"
+    
 admin.site.register(models.Booking)
 class BookingAdmin(admin.ModelAdmin):
     change_list_template = "admin/home/booking/change_list.html"

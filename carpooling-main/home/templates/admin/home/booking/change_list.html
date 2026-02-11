@@ -67,6 +67,7 @@
                 </div>
 
                 <div class="booking-meta">
+                    <strong>Booking ID:</strong> {{ booking.booking_id }}<br>
                     <strong>Plate:</strong> {{ booking.car.license_plate }}<br>
                     <strong>Location:</strong> {{ booking.car.location|title }}<br>
 
@@ -78,6 +79,9 @@
 
                     <strong>Booked by:</strong>
                     {{ booking.booked_by }}<br>
+
+                    <strong>Email ID:</strong>
+                    {{ booking.user_email }}<br>
 
                     {% if booking.client_name %}
                         <strong>Client:</strong>
@@ -91,7 +95,11 @@
 
                     {% if booking.project_no %}
                         <strong>Project:</strong>
-                        {{ booking.project_no }}
+                        {{ booking.project_no }}<br>
+                    {% endif %}
+                    {% if booking.client %}
+                        <strong>client:</strong>
+                        {{ booking.client }}
                     {% endif %}
                 </div>
 
@@ -105,5 +113,4 @@
         </a>
     {% endfor %}
 </div>
-
 {% endblock %}

@@ -28,6 +28,27 @@
                 View Schedule
             </a>
 
+            <a href="{% url 'my_bookings'  %}" class="nav-item {% if request.resolver_match.url_name == 'my_bookings' %}active{% endif %}">
+                My Bookings
+            </a>
+
+            <div class="nav-location">
+                📍 Location:
+                <select class="nav-inputbtn" onchange="changeLocation(this)">
+                    <option value="">Select</option>
+                    <option value="koblenz" {% if request.session.location == "koblenz" %}selected{% endif %}>
+                        Koblenz
+                    </option>
+                    <option value="frankfurt" {% if request.session.location == "frankfurt" %}selected{% endif %}>
+                        Frankfurt
+                    </option>
+                    <option value="berlin" {% if request.session.location == "berlin" %}selected{% endif %}>
+                        Berlin
+                    </option>
+                </select>
+            </div>
+
+
             {% if user.is_authenticated %}
                 <div class="dropdown">
                     <button class="btn-user">
@@ -50,5 +71,11 @@
 
         </div>
     </nav>
+<script>
+function changeLocation(select) {
+    if (!select.value) return;
+    window.location.href = "/set-location/" + select.value + "/";
+}
+</script>
 </body>
 </html>

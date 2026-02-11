@@ -155,14 +155,14 @@
                                 <div class="booking-chip chip-single tooltip-source"
                                      data-tooltip="
                                         <strong>Booked By:</strong> {{ booking.booked_by }}<br>
-                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        {% if booking.client %}<strong>Client:</strong> {{ booking.client.get_full_name|default:booking.client.email }}<br>{% endif %}
                                         <strong>Destination:</strong> {{ booking.destination }}<br>
                                         <strong>Project:</strong> {{ booking.project_no }}<br>
                                         <strong>From:</strong> {{ booking.start_time }}<br>
                                         <strong>To:</strong> {{ booking.end_time }}
                                      ">
                                     <span class="time-text">{{ booking.start_time|time:"H:i" }} - {{ booking.end_time|time:"H:i" }}</span>
-                                    <span class="dest-text">"Booked by {{ booking.client_name|default:booking.booked_by }} to {{ booking.destination }}"</span>
+                                    <span class="dest-text">"Booked by {{ booking.get_client_display }} to {{ booking.destination }}"</span>
                                 </div>
 
                             {% elif booking.start_time.date == day_info.date %}
@@ -170,14 +170,14 @@
                                 <div class="booking-chip chip-start tooltip-source"
                                      data-tooltip="
                                         <strong>Booked By:</strong> {{ booking.booked_by }}<br>
-                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        {% if booking.client %}<strong>Client:</strong> {{ booking.client.get_full_name|default:booking.client.email }}<br>{% endif %}
                                         <strong>Destination:</strong> {{ booking.destination }}<br>
                                         <strong>Project:</strong> {{ booking.project_no }}<br>
                                         <strong>From:</strong> {{ booking.start_time }}<br>
                                         <strong>To:</strong> {{ booking.end_time }}
                                      ">
                                      <span class="time-text">{{ booking.start_time|time:"H:i" }} →</span>
-                                    <span class="dest-text">"Booked by {{ booking.client_name|default:booking.booked_by }} to {{ booking.destination }}"</span>
+                                    <span class="dest-text">"Booked by {{ booking.get_client_display }} to {{ booking.destination }}"</span>
                                 </div>
 
                             {% elif booking.end_time.date == day_info.date %}
@@ -185,7 +185,7 @@
                                 <div class="booking-chip chip-end tooltip-source"
                                      data-tooltip="
                                         <strong>Booked By:</strong> {{ booking.booked_by }}<br>
-                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        {% if booking.client %}<strong>Client:</strong> {{ booking.client.get_full_name|default:booking.client.email }}<br>{% endif %}
                                         <strong>Destination:</strong> {{ booking.destination }}<br>
                                         <strong>Project:</strong> {{ booking.project_no }}<br>
                                         <strong>From:</strong> {{ booking.start_time }}<br>
@@ -200,7 +200,7 @@
                                 <div class="booking-chip chip-middle tooltip-source"
                                      data-tooltip="
                                         <strong>Booked By:</strong> {{ booking.booked_by }}<br>
-                                        {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                        {% if booking.client %}<strong>Client:</strong> {{ booking.client.get_full_name|default:booking.client.email }}<br>{% endif %}
                                         <strong>Destination:</strong> {{ booking.destination }}<br>
                                         <strong>Project:</strong> {{ booking.project_no }}<br>
                                         <strong>From:</strong> {{ booking.start_time }}<br>
@@ -245,14 +245,14 @@
                         <div class="booking-chip chip-single tooltip-source"
                             data-tooltip="
                                 <strong>Booked By:</strong> {{ booking.booked_by }}<br>
-                                {% if booking.client_name %}<strong>Client:</strong> {{ booking.client_name }}<br>{% endif %}
+                                {% if booking.client %}<strong>Client:</strong> {{ booking.client.get_full_name|default:booking.client.email }}<br>{% endif %}
                                 <strong>Car:</strong> {{ booking.car.model_name }}<br>
                                 <strong>Destination:</strong> {{ booking.destination }}<br>
                                 <strong>From:</strong> {{ booking.start_time }}<br>
                                 <strong>To:</strong> {{ booking.end_time }}
                             ">
                             {{ booking.start_time|time:"H:i" }}
-                            {{ booking.client_name|default:booking.booked_by }}
+                            {{ booking.get_client_display }}
                         </div>
                     {% endfor %}
                 {% endif %}

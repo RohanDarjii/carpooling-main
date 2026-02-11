@@ -1,13 +1,38 @@
 # calendar_app/views.py
 
 from datetime import timedelta, datetime, date
-from django.shortcuts import render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from home.models import Car, Booking
 from django.contrib.auth.decorators import login_required
 import calendar
+from django.contrib import messages
+@login_required(login_url='login_landing')
+def my_bookings(request):
+        name = request.user.get_full_name() or request.user.username
+        location = request.session.get("location")
+        if not location:
+            messages.warning(request, "Please select a location to continue.")
+            return redirect("home")
+        bookings = Booking.objects.filter(booked_by = name, car__location= location).order_by('-start_time')
+        context = {
+         "bookings": bookings
+        }
+        return render(request, 'calender/bookings.html', context)
+@login_required
+def delete_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, booked_by=request.user.get_full_name() or request.user.username)
+    
+    if request.method == "POST":
+        booking.delete()
+    
+    return redirect("my_bookings")
 @login_required(login_url='login_landing')
 def weekly_calender(request):
+        location = request.session.get("location")
+        if not location:
+            messages.warning(request, "Please select a location to continue.")
+            return redirect("home")
         view_type = request.GET.get('view', 'week')  # week | month
         date_str = request.GET.get('date')
         if date_str:
@@ -19,7 +44,7 @@ def weekly_calender(request):
         end_of_week = start_of_week + timedelta(days=6)
         week_dates = [start_of_week + timedelta(days=i) for i in range(7)]
         # 3. Get Active Cars
-        cars = Car.objects.filter(is_active=True)
+        cars = Car.objects.filter(is_active=True, location=location)
         
         resource_schedule = []
 
@@ -64,10 +89,10 @@ def weekly_calender(request):
 
             month_bookings = Booking.objects.filter(
                 status='CONFIRMED',
+                car__location=location,
                 start_time__date__lte=month_end,
                 end_time__date__gte=month_start
             )
-
             booking_map = {}
             for booking in month_bookings:
                 current = max(booking.start_time.date(), month_start)
@@ -80,6 +105,7 @@ def weekly_calender(request):
 
 
         context = {
+            'location': location,
             'week_dates': week_dates,
             'resource_schedule': resource_schedule,
             'current_month': focus_date.strftime('%B %Y'),

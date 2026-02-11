@@ -11,5 +11,7 @@ urlpatterns = [
     path('success/', views.booking_success, name='booking_success'),
     # The New Login Landing Page
     path('login-required/', views.login_landing, name='login_landing'),
+    
+    path("set-location/<str:location>/", views.set_location, name="set_location"),
 
 ]

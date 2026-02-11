@@ -1,0 +1,259 @@
+{% include 'home/navbar.html' %}
+{% load static %}
+
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-light: #eff6ff;
+    --border-light: #e2e8f0;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+}
+
+/* Page */
+.bookings-container {
+    max-width: 2000px;
+    margin: 50px auto;
+    padding: 40px;
+}
+
+/* Title */
+.bookings-title {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+}
+
+/* Card */
+.bookings-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+}
+
+/* Table */
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bookings-table thead {
+    background: var(--primary-light);
+}
+
+.bookings-table th {
+    padding: 22px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bookings-table td {
+    padding: 22px;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-dark);
+}
+
+.bookings-table tbody tr {
+    transition: all 0.25s ease;
+}
+
+.bookings-table tbody tr:hover {
+    background: #f9fcff;
+    transform: scale(1.003);
+}
+
+/* Booking ID Badge */
+.booking-id-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #ffffff;
+
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+
+    padding: 8px 16px;
+    border-radius: 40px;
+
+    margin-right: 12px;
+
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+    text-transform: uppercase;
+
+    transition: all 0.25s ease;
+}
+
+.booking-id-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+}
+
+
+/* Status Badge */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-CONFIRMED {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-CANCELLED {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* Delete Button */
+.btn-delete {
+    background: #fff;
+    color: var(--danger);
+    border: 1px solid #fee2e2;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-delete:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px;
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+
+    .bookings-table thead {
+        display: none;
+    }
+
+    .bookings-table, 
+    .bookings-table tbody, 
+    .bookings-table tr, 
+    .bookings-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .bookings-table tr {
+        margin-bottom: 25px;
+        padding: 20px;
+        border-radius: 16px;
+        background: white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .bookings-table td {
+        padding: 12px 0;
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .bookings-table td::before {
+        position: absolute;
+        left: 0;
+        width: 45%;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .bookings-table td:nth-of-type(1)::before { content: "Buchung"; }
+    .bookings-table td:nth-of-type(2)::before { content: "Von"; }
+    .bookings-table td:nth-of-type(3)::before { content: "Bis"; }
+    .bookings-table td:nth-of-type(4)::before { content: "Ziel"; }
+    .bookings-table td:nth-of-type(5)::before { content: "Projekt"; }
+    .bookings-table td:nth-of-type(6)::before { content: "Status"; }
+    .bookings-table td:nth-of-type(7)::before { content: "Aktion"; }
+}
+</style>
+
+<div class="bookings-container">
+    <div class="bookings-title">📋 Meine Buchungen</div>
+
+    <div class="bookings-card">
+
+    {% if bookings %}
+        <table class="bookings-table">
+            <thead>
+                <tr>
+                    <th>Buchung ID</th>
+                    <th>Von</th>
+                    <th>Bis</th>
+                    <th>Ziel</th>
+                    <th>Projekt</th>
+                    <th>Status</th>
+                    <th>Aktion</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td>
+   <div style="display:flex; align-items:center; gap:12px;">
+        <span class="booking-id-badge">
+            #{{ booking.booking_id }}
+        </span>
+        <span style="font-weight:600;">
+            {{ booking.car.model_name }}
+        </span>
+    </div>
+                    </td>
+
+                    <td>{{ booking.start_time|date:"d.m.Y H:i" }}</td>
+                    <td>{{ booking.end_time|date:"d.m.Y H:i" }}</td>
+                    <td>{{ booking.destination }}</td>
+                    <td>{{ booking.project_no }}</td>
+
+                    <td>
+                        <span class="status-badge status-{{ booking.status }}">
+                            {{ booking.status }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <form method="post" action="{% url 'delete_booking' booking.id %}" onsubmit="return confirm('Sind Sie sicher?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-state">
+            Keine Buchungen gefunden.
+        </div>
+    {% endif %}
+
+    </div>
+</div>

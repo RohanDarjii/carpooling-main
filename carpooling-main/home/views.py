@@ -5,6 +5,19 @@ from django.utils.dateparse import parse_date, parse_time
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from . import models
+from .constants import LOCATIONS
+from django.contrib.auth.models import User
+
+@login_required
+def set_location(request, location):
+    valid_locations = [l[0] for l in LOCATIONS]
+
+    if location not in valid_locations:
+        return redirect("home")
+
+    request.session["location"] = location
+    return redirect("home")
+
 # Create your views here.
 def login_landing(request):
     if request.user.is_authenticated:
@@ -13,14 +26,20 @@ def login_landing(request):
 
 @login_required(login_url='login_landing')
 def home(request):
+    users = User.objects.exclude(email="").order_by("email")
     context = {
         'form': request.GET,
+        "users": users,
     }
     return render(request, 'home/home.html', context)
 
 def list_of_cars(request):
-    cars = models.Car.objects.all()
-    return render(request, 'home/list_of_cars.html', {'cars': cars})
+    location = request.session.get("location")
+    if not location:
+        messages.warning(request, "Please select a location to continue.")
+        return redirect('home')
+    cars = models.Car.objects.filter(location=location)
+    return render(request, 'home/list_of_cars.html', {'cars': cars, 'location': location})
 
 #will create a funtion for converting string to datetime object
 def get_datetimes(date_str, time_str):
@@ -29,6 +48,10 @@ def get_datetimes(date_str, time_str):
 
 @login_required(login_url='login_landing')
 def search_results(request):
+    location = request.session.get("location")
+    if not location:
+        messages.warning(request, "Please select a location to continue.")
+        return redirect("home")
     context = {'available_cars': [],
                'errors': [],
                }
@@ -39,13 +62,14 @@ def search_results(request):
     dest = request.GET.get('destination')
     project_no = request.GET.get('project_no')
     client_name = request.GET.get('client_name')
+    client_id = request.GET.get("client")
 
     # Store params to pass them to the template (and later to the booking view)
     context['search_params'] = {
         'from_date': f_date, 'to_date': t_date,
         'time_from': f_time, 'time_to': t_time,
         'destination': dest, 'project_no': project_no,
-        'client_name': client_name,
+        'client_name': client_name,"client": client_id,
     }
     if not all([f_date, t_date, f_time, t_time, project_no]):
         context['errors'].append("Please fill in all required fields.")
@@ -69,7 +93,7 @@ def search_results(request):
             ).values_list('car_id', flat=True)
             #Find Available Cars
             context['available_cars'] = models.Car.objects.filter(
-                is_active=True
+                is_active=True, location= location
             ).exclude(id__in=busy_ids)
     except Exception as e:
         context['errors'].append("Invalid date/time format.")
@@ -77,6 +101,10 @@ def search_results(request):
 
 @login_required(login_url='login_landing')    
 def book_car(request, car_id):
+    location = request.session.get("location")
+    if not location:
+        messages.warning(request, "Please select a location to continue.")
+        return redirect("home")
     if request.method == 'POST':
         f_date = request.POST.get('from_date')
         t_date = request.POST.get('to_date')
@@ -85,11 +113,12 @@ def book_car(request, car_id):
         dest = request.POST.get('destination')
         project_no = request.POST.get('project_no')
         client_name = request.POST.get('client_name')
+        client_id = request.POST.get("client")
          # If client_name is provided, use it as booked_by
         try:
             start_full = get_datetimes(f_date, f_time)
             end_full = get_datetimes(t_date, t_time)
-            car = get_object_or_404(models.Car, id=car_id)
+            car = get_object_or_404(models.Car, id=car_id, location=location)
             #just checking the race condition if two users are booking the same car at the same time
             is_booked = models.Booking.objects.filter(
                 car=car,
@@ -101,7 +130,10 @@ def book_car(request, car_id):
                 messages.error(request, "Sorry, this car {car.model_name} has just been booked for the selected time slot.")
                 return redirect('home')
             microsoft_name = request.user.get_full_name() or request.user.username
-            #if not booked, create the booking
+            user_email = request.user.email
+            client = None
+            if client_id:
+                client = User.objects.filter(id=client_id).first()
             models.Booking.objects.create(
                 car=car,
                 start_time=start_full,
@@ -111,13 +143,17 @@ def book_car(request, car_id):
                 status='CONFIRMED',
                 booked_by=microsoft_name,
                 client_name=client_name,
+                user_email=user_email,
+                client=client
                 
             )
+            print("POST DATA:", request.POST)
+            print("CLIENT ID RECEIVED:", client_id)
             return redirect('booking_success')
         
         except Exception :
             messages.error(request, "An error occurred while processing your booking. Please try again.")
-            return redirect('home')
+            return redirect('home' )
         
     return redirect('home')
 @login_required(login_url='login_landing')

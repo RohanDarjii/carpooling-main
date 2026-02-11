@@ -70,6 +70,11 @@
                 {% else %}
                     <span class="badge badge-active">Available</span>
                 {% endif %}
+                {% if car.is_service_due %}
+    <span class="badge badge-inactive">🔴 Service Due</span>
+{% else %}
+    <span class="badge badge-active">🟢 Serviced</span>
+{% endif %}
             </div>
         </a>
     {% endfor %}

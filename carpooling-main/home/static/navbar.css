@@ -2,6 +2,62 @@
         padding-top: 80px;
         margin: 0;
     }
+/* =========================
+   LOCATION SELECT (NAVBAR)
+   ========================= */
+
+.nav-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* Select wrapper look */
+.nav-inputbtn {
+    appearance: none;               /* Remove default browser style */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    padding: 7px 34px 7px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+
+    cursor: pointer;
+    outline: none;
+
+    transition: all 0.2s ease;
+
+    /* Dropdown arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364758b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px;
+}
+
+/* Hover */
+.nav-inputbtn:hover {
+    background-color: #ffffff;
+    border-color: #cbd5f5;
+}
+
+/* Focus (active state) */
+.nav-inputbtn:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Disabled option */
+.nav-inputbtn option[value=""] {
+    color: #94a3b8;
+}
 
     /* 2. The Fixed Top Bar Container */
     .navbar {
@@ -57,6 +113,8 @@
         color: #2563eb;
         background: #eff6ff;
     }
+
+    
 
     /* 6. User / Login Buttons */
     .btn-login, .btn-user {
@@ -129,3 +187,8 @@
         color: #1e293b;
         padding-left: 20px; /* Slide effect */
     }
+
+/* =========================
+   LOCATION WARNING (BOTTOM)
+   ========================= */
+
